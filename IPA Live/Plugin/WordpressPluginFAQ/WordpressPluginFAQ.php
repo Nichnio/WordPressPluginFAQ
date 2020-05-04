@@ -8,102 +8,43 @@
  * Author: Nicolas Lars Friedrich Suter
  * Author URI: http://www.onebyte.ch/
  */
-$args = array(
-    'post_type'      => 'faq', // Custom post type Name
-    'posts_per_page' => '50', // Max Post per Page
-    'order_by'       => 'date', // How to Order. date
-    'order'          => 'ASC', // Ascending
-);
 
-echo '<h1 class="title">FAQs</h1>'.
-    '<div class="flex-container">';
-
-$new_query = new WP_Query ( $args );
-if ( $new_query->have_posts() ) { // If there are Posts
-    while ( $new_query->have_posts() ) { // While there are Posts
-        $new_query->the_post();
-        $question   = get_field( "question" );
-        $answer    = get_field( "answer" );
-        $author     = get_field( "author" );
-
-
-        if($firstname) {
-            echo $firstname;
-        }
-
-        echo '<div class="sep">' .
-            '<table style="text-align: center;" class="border">' .
-            '<td>' .
-            '<tr>';
-        if ( is_string( $question ) && strlen( $question ) && is_string( $answer ) && strlen( $answer ) || is_array( $answer ) || ! is_null( $answer ) ) {
-            echo '<div class="question">' .
-                $question .
-                '</div>' .
-                $answer .
-                '<br>';
-        }
-        echo '</tr>' .
-            '<tr>';
-        if ( get_field('author') ) {
-            echo '<div class="author">' .
-                'Author: ' .
-                $author .
-                '</div>';
-        } else {
-            echo '<div class="author">' .
-                'Author: ' .
-                get_the_author_meta('display_name') .
-                '</div>';
-        }
-        echo '</tr>' .
-            '</td>' .
-            '</table>' .
-            '</div>';
-    }
-}
-echo '</div>';
-} );
-} );
-
-function create_posttype() {
-
-    function category() {
-        // create a new taxonomy
-        register_taxonomy(
-            'category',
-            'faq',
-            array(
-                'label' => __( 'category' ),
-                'rewrite' => array( 'slug' => 'categories' ),
-                'capabilities' => array(
-                    'assign_terms' => 'edit_guides',
-                    'edit_terms' => 'publish_guides'
-                )
-            )
-        );
-    }
-    add_action( 'init', 'category' );
-
+add_action( 'init', 'create_team_post_type' );
+function create_team_post_type() {
     register_post_type( 'faq',
         array(
-            'labels'      => array(
-                'name'              => __( 'FAQ' ),
-                'singular_name'     => __( 'FAQ' ),
+            'labels' => array(
+                'name' => __( 'FAQ' ),
+                'singular_name' => __( 'FAQ' ),
                 'add_new'           => __( 'Add new FAQ' ),
                 'all_items'         => __( 'Overview' ),
                 'view_item'         => __( 'View FAQs' ),
-                'search_items'      => __( 'Looking for' ),
-                'supports'          => array( 'title', 'editor', 'thumbnail' ),
-                'texonomies'        => array('category'),
+                'add_theme_support' => __( 'post-thumbnails' ),
             ),
-            'public'      => true,
-            'has_archive' => true,
-            'rewrite'     => array( 'slug' => 'faq' ),
+            'publicly_queryable'    => true,
+            'show_ui'               => true,
+            'query_var'             => true,
+            'hierarchical'          => false,
+            'capability_type'       => __('post'),
+            'taxonomies'            => array('faq'),
+            'rewrite'               => array('slug' => 'faq' ),
+            'supports'              => array('title','editor','thumbnail')
         )
     );
 }
 
-add_action( 'init', 'create_posttype' );
+add_action( 'init', 'create_faq_category' );
+function create_faq_category() {
+    register_taxonomy(
+        'faq-category',
+        'faq',
+        array(
+            'label'             => __( 'FAQ-Categorys' ),
+            'rewrite'           => array( 'slug' => 'faq-category' ),
+            'hierarchical'      => true,
+        )
+    );
+}
 
 
 if( function_exists('acf_add_local_field_group') ):
@@ -198,3 +139,6 @@ if( function_exists('acf_add_local_field_group') ):
 
 endif;
 
+
+
+include 'shortcode.php';

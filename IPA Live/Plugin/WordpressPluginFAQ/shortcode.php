@@ -1,4 +1,5 @@
 <?php
+include 'css.php'; // Inluding the CSS File
 include 'function.php';
 
 add_action( 'init', function () {
@@ -18,42 +19,50 @@ add_action( 'init', function () {
         if ( $new_query->have_posts() ) { // If there are Posts
             while ( $new_query->have_posts() ) { // While there are Posts
                 $new_query->the_post();
-                $question   = get_field( "question" );
-                $answer    = get_field( "answer" );
-                $author     = get_field( "author" );
 
-                echo '<div class="sep">' .
-                    '<table style="text-align: center;" class="border">' .
-                    '<td>' .
-                    '<tr>';
-
-                if ( is_string( $question ) && strlen( $question ) && is_string( $answer ) && strlen( $answer ) || is_array( $answer ) || ! is_null( $answer ) ) {
-                    echo '<div class="question">' .
-                        $question .
-                        '</div>' .
-                        $answer .
-                        '<br>';
-                }
-
-                echo '</tr>' .
-                    '<tr>';
-
-                faq_thumbnail();
-
-                echo '</tr>' .
-                    '<tr>';
-
-                faq_author($author);
-
-                echo '</tr>' .
-                    '</td>' .
-                    '</table>' .
-                    '</div>';
+                faq_table($myposts, $question, $answer, $author);
 
             }
         }
-        echo '</div>';
     } );
 } );
 
 order_notification();
+
+// Shortcode
+function shortcode_faq( $atts ) {
+
+    faq_title();
+
+    extract(shortcode_atts(array(
+        'class_name'    => 'cat-post',
+        'totalposts'    => '-1',
+        'category'      => '',
+        'thumbnail'     => 'false',
+        'excerpt'       => 'true',
+        'orderby'       => 'post_date'
+    ), $atts));
+
+
+    $args = array(
+        'nopaging'       => true,
+        'orderby' => $orderby,
+        'post_type' => 'faq',
+        'tax_query' => array(
+            array(
+                'taxonomy' => 'faq-category',
+                'field' => 'slug',
+                'terms' => array($category)
+            )
+        ));
+    $myposts = NEW WP_Query($args);
+
+    while($myposts->have_posts()) {
+        $myposts->the_post();
+        faq_table($myposts, $question, $answer, $author);
+    }
+    add_shortcode('faq-category', 'cat_func');
+}
+add_shortcode( 'faq-category', 'shortcode_faq' );
+
+

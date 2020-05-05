@@ -8,30 +8,36 @@
  * Author: Nicolas Lars Friedrich Suter
  * Author URI: http://www.onebyte.ch/
  */
-
-add_action( 'init', 'create_team_post_type' );
-function create_team_post_type() {
-    register_post_type( 'faq',
-        array(
-            'labels' => array(
-                'name' => __( 'FAQ' ),
-                'singular_name' => __( 'FAQ' ),
-                'add_new'           => __( 'Add new FAQ' ),
-                'all_items'         => __( 'Overview' ),
-                'view_item'         => __( 'View FAQs' ),
-                'add_theme_support' => __( 'post-thumbnails' ),
-            ),
-            'publicly_queryable'    => true,
-            'show_ui'               => true,
-            'query_var'             => true,
-            'hierarchical'          => false,
-            'capability_type'       => __('post'),
-            'taxonomies'            => array('faq'),
-            'rewrite'               => array('slug' => 'faq' ),
-            'supports'              => array('title','editor','thumbnail')
-        )
-    );
+add_action('init', 'create_faq_post_type');
+function create_faq_post_type() {
+    if (current_user_can('administrator') || current_user_can('editor')) {
+        register_post_type('faq',
+            array(
+                'labels' => array(
+                    'name' => __('FAQ'),
+                    'singular_name' => __('FAQ'),
+                    'add_new' => __('Add new FAQ'),
+                    'add_new_item' => __( 'Add New FAQ'),
+                    'edit_item' => __('Edit FAQ'),
+                    'all_items' => __('Overview'),
+                    'view_item' => __('View FAQs'),
+                    'add_theme_support' => __('post-thumbnails'),
+                ),
+                'publicly_queryable' => true,
+                'show_ui' => true,
+                'query_var' => true,
+                'has_archive' => true,
+                'hierarchical' => false,
+                'capability_type' => __('post'),
+                'taxonomies' => array('faq'),
+                'public'    => true,
+                'rewrite' => array('slug' => 'faq'),
+                'supports' => array('title', 'editor', 'thumbnail')
+            )
+        );
+    }
 }
+
 
 add_action( 'init', 'create_faq_category' );
 function create_faq_category() {

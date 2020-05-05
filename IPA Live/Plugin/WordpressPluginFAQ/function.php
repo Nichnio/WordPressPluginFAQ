@@ -13,6 +13,44 @@ function faq_title() {
         '<div class="flex-container">';
 }
 
+function faq_table($myposts, $question, $answer, $author) {
+
+    $question = get_field("question");
+    $answer = get_field("answer");
+    $author = get_field("author");
+
+
+    echo '<div class="sep">' .
+        '<table style="text-align: center;" class="border">' .
+        '<td>' .
+        '<tr>';
+
+    if (is_string($question) && strlen($question) && is_string($answer) && strlen($answer) || is_array($answer) || !is_null($answer)) {
+        echo '<div class="question">' .
+            $question .
+            '</div>' .
+            $answer .
+            '<br>';
+    }
+
+    echo '</tr>' .
+        '<tr>';
+
+    faq_thumbnail();
+
+    echo '</tr>' .
+        '<tr>';
+
+    faq_author($author);
+
+    echo '</tr>' .
+        '</td>' .
+        '</table>' .
+        '</div>';
+}
+
+
+
 function faq_thumbnail() {
     if ( has_post_thumbnail() ) {
         echo '<div class="thumbnail">';

@@ -20,7 +20,7 @@ add_action( 'init', function () {
             while ( $new_query->have_posts() ) { // While there are Posts
                 $new_query->the_post();
 
-                faq_table($myposts, $question, $answer, $author);
+                faq_table( $myposts, $question, $answer, $author);
 
             }
         }
@@ -32,30 +32,34 @@ order_notification();
 // Shortcode
 function shortcode_faq( $atts ) {
 
+
+    change_lang();
+
     faq_title();
 
-    extract(shortcode_atts(array(
-        'class_name'    => 'cat-post',
-        'totalposts'    => '-1',
-        'category'      => '',
-        'thumbnail'     => 'false',
-        'excerpt'       => 'true',
-        'orderby'       => 'post_date'
-    ), $atts));
+
+        extract(shortcode_atts(array(
+            'class_name'    => 'cat-post',
+            'totalposts'    => '-1',
+            'category'      => '',
+            'thumbnail'     => 'false',
+            'excerpt'       => 'true',
+            'orderby'       => 'post_date'
+        ), $atts));
 
 
-    $args = array(
-        'nopaging'       => true,
-        'orderby' => $orderby,
-        'post_type' => 'faq',
-        'tax_query' => array(
-            array(
-                'taxonomy' => 'faq-category',
-                'field' => 'slug',
-                'terms' => array($category)
-            )
-        ));
-    $myposts = NEW WP_Query($args);
+        $args = array(
+            'nopaging'       => true,
+            'orderby' => $orderby,
+            'post_type' => 'faq',
+            'tax_query' => array(
+                array(
+                    'taxonomy' => 'faq-category',
+                    'field' => 'slug',
+                    'terms' => array($category)
+                )
+            ));
+        $myposts = NEW WP_Query($args);
 
     while($myposts->have_posts()) {
         $myposts->the_post();
@@ -66,3 +70,8 @@ function shortcode_faq( $atts ) {
 add_shortcode( 'faq-category', 'shortcode_faq' );
 
 
+
+if ( function_exists( 'pll_register_string' ) ) {
+    include 'register_lang.php';
+    register_question();
+}

@@ -9,9 +9,9 @@ function order_notification() {
 }
 
 function faq_title() {
-    echo '<h1 class="title">FAQs</h1>'.
+    echo '<h1 class="title">FAQs</h1>' .
         '<div class="flex-container">';
-}
+    }
 
 function faq_table($myposts, $question, $answer, $author) {
 
@@ -51,11 +51,20 @@ function faq_table($myposts, $question, $answer, $author) {
 
 
 
+
 function faq_thumbnail() {
     if ( has_post_thumbnail() ) {
         echo '<div class="thumbnail">';
         the_post_thumbnail( 'thumbnail' );
         echo '</div>';
+    }
+}
+
+function change_lang() {
+    if (function_exists('pll_the_languages')) {
+
+        pll_the_languages(array('dropdown' => 1, 'show_flags' => 1, 'show_names' => 1, 'hide_if_empty', 'hide_if_no_translation'));
+
     }
 }
 
@@ -74,4 +83,3 @@ function faq_author($author) {
             '</div>';
     }
 }
-

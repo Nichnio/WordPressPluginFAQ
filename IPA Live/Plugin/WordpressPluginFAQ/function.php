@@ -1,5 +1,7 @@
 <?php
 
+// If the Plug-In to order your Faqs is not installed show notification
+// WordPress function apply_filters https://developer.wordpress.org/reference/functions/apply_filters/
 function order_notification() {
     if (!in_array('simple-custom-post-order/simple-custom-post-order.php', apply_filters('active_plugins', get_option('active_plugins')))) {
         echo '<div class="updated notice">' .
@@ -8,11 +10,25 @@ function order_notification() {
     }
 }
 
+
+
+add_action('init', function () {
+    pll_register_string('question','Question');
+    pll__('Question');
+} );
+
+
+
+
+
+
+// Title for Faq Pages
 function faq_title() {
     echo '<h1 class="title">FAQs</h1>' .
         '<div class="flex-container">';
-    }
+}
 
+// Display Table for Faq
 function faq_table($myposts, $question, $answer, $author) {
 
     $question = get_field("question");
@@ -31,6 +47,8 @@ function faq_table($myposts, $question, $answer, $author) {
             '</div>' .
             $answer .
             '<br>';
+
+        /* register_question($author1);*/
     }
 
     echo '</tr>' .
@@ -49,9 +67,7 @@ function faq_table($myposts, $question, $answer, $author) {
         '</div>';
 }
 
-
-
-
+// Display thumbnail if existent from featured image WordPress
 function faq_thumbnail() {
     if ( has_post_thumbnail() ) {
         echo '<div class="thumbnail">';
@@ -68,6 +84,7 @@ function change_lang() {
     }
 }
 
+// Display author name if exists else display wordpress user name
 function faq_author($author) {
     if ( get_field('author') ) {
         echo '<div class="author">' .
@@ -83,3 +100,5 @@ function faq_author($author) {
             '</div>';
     }
 }
+
+/*include 'register_lang.php';*/

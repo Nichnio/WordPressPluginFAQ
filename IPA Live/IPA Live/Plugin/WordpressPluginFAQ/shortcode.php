@@ -1,102 +1,82 @@
-
 <?php
 
+include 'css.php'; // Inluding the CSS File
+include 'function.php';
+
+
+
 add_action( 'init', function () {
+    // WordPress function remove editor field
     remove_post_type_support( 'faq', 'editor' );
+
     add_shortcode( 'faq', function ( $atts ) {
 
         $args = array(
-            'post_type'             => 'faq',
-            'posts_per_page'        => '50',
-            'order_by'              => 'date',
-            'order'                 => 'ASC',
+            'post_type'      => 'faq', // Custom post type Name
+            'order_by'       => 'date', // How to Order. date
+            'order'          => 'ASC', // Ascending
+
         );
 
-        echo '<h1 class="title">FAQs</h1>'.
-            '<div class="flex-container">';
 
         $new_query = new WP_Query ( $args );
-        if ( $new_query->have_posts() ) {
-            while ( $new_query->have_posts() ) {
+        if ( $new_query->have_posts() ) { // If there are Posts
+            faq_title();
+            while ( $new_query->have_posts() ) { // While there are Posts
                 $new_query->the_post();
-                $question       = get_field( "question" );
-                $answer         = get_field( "answer" );
-                $author         = get_field( "author" );
 
+                faq_table( $myposts, $question, $answer, $author);
 
-                if($firstname) {
-                    echo $firstname;
-                }
-
-                echo '<div class="sep">' .
-                    '<table style="text-align: center;" class="border">' .
-                    '<td>' .
-                    '<tr>';
-                if ( is_string( $question ) && strlen( $question ) && is_string( $answer ) && strlen( $answer ) || is_array( $answer ) || ! is_null( $answer ) ) {
-                    echo '<div class="question">' .
-                        $question .
-                        '</div>' .
-                        $answer .
-                        '<br>';
-                }
-                echo '</tr>' .
-                    '<tr>';
-                if ( has_post_thumbnail() ) {
-                    echo '<div class="thumbnail">';
-                    the_post_thumbnail( 'thumbnail' );
-                    echo '</div>';
-                }
-                echo '</tr>' .
-                    '<tr>';
-                if ( get_field('author') ) {
-                    echo '<div class="author">' .
-                        'Author: ' .
-                        $author .
-                        '</div>';
-                } else {
-                    echo '<div class="author">' .
-                        'Author: ' .
-                        get_the_author_meta('display_name') .
-                        '</div>';
-                }
-                echo '</tr>' .
-                    '</td>' .
-                    '</table>' .
-                    '</div>';
             }
         }
-        echo '</div>';
     } );
 } );
-/*
-add_shortcode( 'faqs', 'post_type' => 'faq','category_name' => 'faq-category', function ( $atts ) {
 
-    echo 'Test';
+order_notification();
 
-}
+// Shortcode
+function shortcode_faq( $atts )
+{
+    change_lang();
+
+    faq_title();
 
 
+    extract(shortcode_atts(array(
+        'class_name'    => 'cat-post',
+        'totalposts'    => '-1',
+        'category'      => '',
+        'thumbnail'     => 'false',
+        'excerpt'       => 'true',
+        'orderby'       => 'post_date'
+    ), $atts));
 
-$args = array( 'posts_per_page'=>-1,'post_type' => 'faq','category_name' => 'faq-category' );
-$allposts= get_posts( $args );
-if ($allposts) {
-    foreach ( $allposts as $post ) {
-        setup_postdata($post);
-        ?>
-        <div class="post_li">
-            <h3><?php the_title(); ?></h3>
-            <p><?php  ?></p>
-            <?php $catename= get_the_terms(get_the_ID(),array('country'));
-            foreach ( $catename as $term ) {
-                $term_link = get_term_link( $term, array( 'country') );
 
-                ?>
-                <a>"><?php echo $term->name ?></a>
-                <?php
-            }
-            ?>
-        </div>
-        <?php
+    $args = array(
+        'nopaging'      => true,
+        'orderby'       => $orderby,
+        'post_type'     => 'faq',
+        'tax_query'     => array(
+            array(
+                'taxonomy'  => 'faq-kategorien',
+                'field'     => 'slug',
+                'terms'     => array($category)
+            )
+        ));
+    $myposts = NEW WP_Query($args);
+    if ($myposts->have_posts()) { // If there are Posts
+        while ($myposts->have_posts()) {
+            $myposts->the_post();
+            faq_table($myposts, $question, $answer, $author);
+        }
     }
+
 }
-?>
+add_shortcode( 'faq-kategorien', 'shortcode_faq' );
+
+
+/*
+if ( function_exists( 'pll_register_string' ) ) {
+    include 'register_lang.php';
+    register_question();
+}*/

@@ -1,6 +1,8 @@
 <?php
+
 include 'css.php'; // Inluding the CSS File
 include 'function.php';
+
 
 
 add_action( 'init', function () {
@@ -15,7 +17,6 @@ add_action( 'init', function () {
             'order'          => 'ASC', // Ascending
 
         );
-
 
 
         $new_query = new WP_Query ( $args );
@@ -36,8 +37,6 @@ order_notification();
 // Shortcode
 function shortcode_faq( $atts )
 {
-
-
     change_lang();
 
     faq_title();
@@ -59,7 +58,7 @@ function shortcode_faq( $atts )
         'post_type'     => 'faq',
         'tax_query'     => array(
             array(
-                'taxonomy'  => 'faq-category',
+                'taxonomy'  => 'faq-kategorien',
                 'field'     => 'slug',
                 'terms'     => array($category)
             )
@@ -71,10 +70,9 @@ function shortcode_faq( $atts )
             faq_table($myposts, $question, $answer, $author);
         }
     }
-    add_shortcode('faq-category', 'cat_func');
 
 }
-add_shortcode( 'faq-category', 'shortcode_faq' );
+add_shortcode( 'faq-kategorien', 'shortcode_faq' );
 
 
 /*

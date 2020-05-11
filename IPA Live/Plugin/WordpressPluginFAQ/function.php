@@ -3,9 +3,9 @@
 // If the Plug-In to order your Faqs is not installed show notification
 // WordPress function apply_filters https://developer.wordpress.org/reference/functions/apply_filters/
 function order_notification() {
-    if (!in_array('simple-custom-post-order/simple-custom-post-order.php', apply_filters('active_plugins', get_option('active_plugins')))) {
+    if (in_array('simple-custom-post-order/simple-custom-post-order.php', apply_filters('active_plugins', get_option('active_plugins')))) {
         echo '<div class="updated notice">' .
-            '<p>To sort the FAQs Donwload the following <a href="https://wordpress.org/plugins/simple-custom-post-order/">Plug-In</a></p>' .
+            '<p>Um die FAQs zu Sortieren, laden Sie folgendes <a href="https://wordpress.org/plugins/simple-custom-post-order/" target="_blank">Plug-In</a> herunter.</p>' .
             '</div>';
     }
 }
@@ -31,9 +31,9 @@ function faq_title() {
 // Display Table for Faq
 function faq_table($myposts, $question, $answer, $author) {
 
-    $question = get_field("question");
-    $answer = get_field("answer");
-    $author = get_field("author");
+    $question = get_field("frage");
+    $answer = get_field("antwort");
+    $author = get_field("autor");
 
 
     echo '<div class="sep">' .

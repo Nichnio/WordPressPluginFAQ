@@ -6,7 +6,7 @@ add_action( 'wp_head', function () { ?>
         body {
             line-height: unset !important;
         }
-        
+
         .flex-container {
             display: flex;
             flex-wrap: wrap;
@@ -31,8 +31,6 @@ add_action( 'wp_head', function () { ?>
         .entry-content > *:not(.alignwide):not(.alignfull):not(.alignleft):not(.alignright):not(.is-style-wide){
             max-width: unset !important;
         }
-
-
 
         .border tr {
             border: 10px solid transparent;

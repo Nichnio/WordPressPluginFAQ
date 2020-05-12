@@ -4,23 +4,15 @@
  * Plugin Name: WordpressPluginFAQ
  * Plugin URI:
  * Description: This Plugin was created during my IPA
- * Version: 0.1
+ * Version: 0.9
  * Author: Nicolas Lars Friedrich Suter
  * Author URI: http://www.onebyte.ch/
  * Text Domain: WordpressPluginFAQ
  * Domain Path: /languages/
  */
 
-// Ist wordpress geladen? Um zu verhindern Php direkt aufruf
-
+// Prevent direct access to PHP through url
 defined( 'ABSPATH' ) or die;
-
-//Andere bekannte Plugins ansehen
-
-
-
-
-
 
 // The following code is copied with little adjustments from the URL below.
 // URL: https://www.advancedcustomfields.com/resources/including-acf-within-a-plugin-or-theme/
@@ -40,71 +32,20 @@ if( !class_exists('acf')) {
     {
         return MY_ACF_URL;
     }
-    /*
-    //  Hide the ACF admin menu item.
-        add_filter('acf/settings/show_admin', 'my_acf_settings_show_admin');
-        function my_acf_settings_show_admin($show_admin)
-        {
-            return false;
-        }*/
-}
-
-// Executes after WordPress has finished loading (before headers are sent)
 /*
- *
- * Coming soon
- *
- */
-add_action('init', 'create_faq_post_type');
-function create_faq_post_type() {
-    // WordPress function (If current user is administrator or editor)
-    if (current_user_can('administrator') || current_user_can('editor')) {
-        register_post_type('faq',
-            array(
-                'labels' => array(
-                    'name' => __('FAQ'),
-                    'singular_name' => __('FAQ'),
-                    'add_new' => __('Neues FAQ hinzufügen'),
-                    'add_new_item' => __( 'Neues FAQ hinzufügen'),
-                    'edit_item' => __('FAQ bearbeiten'),
-                    'all_items' => __('Übersicht'),
-                    'view_item' => __('Ansehen der FAQs'),
-                    'search_items' => __('Nach FAQs Suchen'),
-                    'add_theme_support' => __('post-thumbnails'),
-                ),
-                'publicly_queryable' => true,
-                'show_ui' => true,
-                'query_var' => true,
-                'has_archive' => true,
-                'hierarchical' => false,
-                'capability_type' => __('post'),
-                'taxonomies' => array('faq'),
-                'public'    => true,
-                'rewrite' => array('slug' => 'faq'),
-                'supports' => array('title', 'editor', 'thumbnail')
-            )
-        );
-    }
+//  Hide the ACF admin menu item.
+    add_filter('acf/settings/show_admin', 'my_acf_settings_show_admin');
+    function my_acf_settings_show_admin($show_admin)
+    {
+        return false;
+    }*/
 }
 
-// Create categories
-add_action( 'init', 'create_faq_category' );
-function create_faq_category() {
-    register_taxonomy(
-        'faq-kategorien',
-        'faq',
-        array(
-            'label'             => __( 'FAQ-Kategorien'),
-            'add_new'           => __('Neue FAQ Kategorie hinzufügen'),
-            'add_new_item'      => __( 'Neue FAQ Kategorie hinzufügen'),
-            'rewrite'           => array( 'slug' => 'faq-kategorien' ),
-            'hierarchical'      => true,
-        )
-    );
-}
 
 // Checks if acf is installed
-if( function_exists('acf_add_local_field_group') ):
+add_action('acf/init', function () {
+
+
     //Should add fieldgroup
     acf_add_local_field_group(array(
         'key' => 'group_5ea922b5c5d52',
@@ -187,9 +128,59 @@ if( function_exists('acf_add_local_field_group') ):
         'description' => '',
     ));
 
-endif;
+
+});
+
+    // Executes after WordPress has finished loading (before headers are sent)
+    add_action('init', 'create_faq_post_type');
+    function create_faq_post_type() {
+        // WordPress function (If current user is administrator or editor)
+        if (current_user_can('administrator') || current_user_can('editor')) {
+            register_post_type('faq',
+                array(
+                    'labels'                => array(
+                        'name'              => __('FAQ'),
+                        'singular_name'     => __('FAQ'),
+                        'add_new'           => __('Neues FAQ hinzufügen'),
+                        'add_new_item'      => __( 'Neues FAQ hinzufügen'),
+                        'edit_item'         => __('FAQ bearbeiten'),
+                        'all_items'         => __('Übersicht'),
+                        'view_item'         => __('Ansehen der FAQs'),
+                        'search_items'      => __('Nach FAQs Suchen'),
+                        'add_theme_support' => __('post-thumbnails'),
+                    ),
+                    'publicly_queryable'    => true,
+                    'show_ui'               => true,
+                    'query_var'             => true,
+                    'has_archive'           => true,
+                    'hierarchical'          => false,
+                    'capability_type'       => __('post'),
+                    'taxonomies'            => array('faq'),
+                    'public'                => true,
+                    'rewrite'               => array('slug' => 'faq'),
+                    'supports'              => array('title', 'editor', 'thumbnail')
+                )
+            );
+        }
+    }
+
+// Create categories
+add_action( 'init', 'create_faq_category' );
+function create_faq_category() {
+    register_taxonomy(
+        'faq-kategorien',
+        'faq',
+        array(
+            'label'                     => __('FAQ-Kategorien'),
+            'add_new'                   => __('Neue FAQ Kategorie hinzufügen'),
+            'add_new_item'              => __('Neue FAQ Kategorie hinzufügen'),
+            'rewrite'                   => array( 'slug' => 'faq-kategorien' ),
+            'hierarchical'              => true,
+        )
+    );
+}
 
 
 include 'shortcode.php';
-
+//include 'add_fieldgroup.php';
 //include 'register_lang.php';

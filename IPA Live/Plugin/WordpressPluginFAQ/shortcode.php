@@ -1,6 +1,6 @@
 <?php
 
-include 'css.php'; // Inluding the CSS File
+include 'css.php';
 include 'function.php';
 
 
@@ -19,13 +19,13 @@ add_action( 'init', function () {
         );
 
 
-        $new_query = new WP_Query ( $args );
-        if ( $new_query->have_posts() ) { // If there are Posts
+        $new_posts = new WP_Query ( $args );
+        if ( $new_posts->have_posts() ) { // If there are Posts
             faq_title();
-            while ( $new_query->have_posts() ) { // While there are Posts
-                $new_query->the_post();
+            while ( $new_posts ->have_posts() ) { // While there are Posts
+                $new_posts->the_post();
 
-                faq_table( $myposts, $question, $answer, $author);
+                faq_table( $new_posts, $question, $answer, $author);
 
             }
         }
@@ -41,7 +41,7 @@ function shortcode_faq( $atts )
 
     faq_title();
 
-
+// fills in default when needed
     extract(shortcode_atts(array(
         'class_name'    => 'cat-post',
         'totalposts'    => '-1',
@@ -63,20 +63,14 @@ function shortcode_faq( $atts )
                 'terms'     => array($category)
             )
         ));
-    $myposts = NEW WP_Query($args);
-    if ($myposts->have_posts()) { // If there are Posts
-        while ($myposts->have_posts()) {
-            $myposts->the_post();
-            faq_table($myposts, $question, $answer, $author);
+    $new_posts = new WP_Query($args);
+    if ($new_posts->have_posts()) { // If there are Posts
+        while ($new_posts->have_posts()) { // While there are Posts
+            $new_posts->the_post();
+            faq_table($new_posts, $question, $answer, $author);
         }
     }
 
 }
 add_shortcode( 'faq-kategorien', 'shortcode_faq' );
 
-
-/*
-if ( function_exists( 'pll_register_string' ) ) {
-    include 'register_lang.php';
-    register_question();
-}*/

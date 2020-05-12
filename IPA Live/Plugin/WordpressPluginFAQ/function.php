@@ -10,18 +10,6 @@ function order_notification() {
     }
 }
 
-
-
-add_action('init', function () {
-    pll_register_string('question','Question');
-    pll__('Question');
-} );
-
-
-
-
-
-
 // Title for Faq Pages
 function faq_title() {
     echo '<h1 class="title">FAQs</h1>' .
@@ -29,7 +17,7 @@ function faq_title() {
 }
 
 // Display Table for Faq
-function faq_table($myposts, $question, $answer, $author) {
+function faq_table($new_posts, $question, $answer, $author) {
 
     $question = get_field("frage");
     $answer = get_field("antwort");
@@ -47,8 +35,10 @@ function faq_table($myposts, $question, $answer, $author) {
             '</div>' .
             $answer .
             '<br>';
-
-        /* register_question($author1);*/
+    } else {
+        echo '<div class="question">' .
+            'Leider sind die Angaben nicht korrekt eingetragen. Bitte versuchen Sie es erneut.' .
+            '</div><br>';
     }
 
     echo '</tr>' .
@@ -78,9 +68,7 @@ function faq_thumbnail() {
 
 function change_lang() {
     if (function_exists('pll_the_languages')) {
-
         pll_the_languages(array('dropdown' => 1, 'show_flags' => 1, 'show_names' => 1, 'hide_if_empty', 'hide_if_no_translation'));
-
     }
 }
 
@@ -101,4 +89,3 @@ function faq_author($author) {
     }
 }
 
-/*include 'register_lang.php';*/

@@ -1,76 +1,92 @@
 <?php
-
+// include CSS
 include 'css.php';
+// include the functions
 include 'function.php';
 
 
+add_action( 'init', function() {
 
-add_action( 'init', function () {
-    // WordPress function remove editor field
-    remove_post_type_support( 'faq', 'editor' );
+    //shortcode for all faqs
+    add_shortcode( 'faq', function() {
 
-    add_shortcode( 'faq', function ( $atts ) {
+        $args = [
 
-        $args = array(
-            'post_type'      => 'faq', // Custom post type Name
-            'order_by'       => 'date', // How to Order. date
-            'order'          => 'ASC', // Ascending
+            'post_type' => 'faq',
+            'order_by'  => 'date',
+            'order'     => 'asc',
 
-        );
-
-
+        ];
+        // if there are faqs
         $new_posts = new WP_Query ( $args );
-        if ( $new_posts->have_posts() ) { // If there are Posts
+
+        if ( $new_posts->have_posts() ) {
+
+            // if polylang is installed let the language change
+            change_lang();
+
+            // show FAQ as title
             faq_title();
-            while ( $new_posts ->have_posts() ) { // While there are Posts
+
+            // While there are faqs
+            while ( $new_posts->have_posts() ) {
                 $new_posts->the_post();
 
-                faq_table( $new_posts, $question, $answer, $author);
+                // show faqs in table
+                faq_table();
 
             }
         }
     } );
 } );
 
-order_notification();
+// Shortcodem for categorys
+function shortcode_faq( $atts ) {
 
-// Shortcode
-function shortcode_faq( $atts )
-{
-    change_lang();
+    $posts_per_page = -1;
+    $category       = '';
 
-    faq_title();
+    // assign values to variables
+    extract( shortcode_atts( [
+        'posts_per_page' => -1,
+        'category' => '',
+    ], $atts ) );
 
-// fills in default when needed
-    extract(shortcode_atts(array(
-        'class_name'    => 'cat-post',
-        'totalposts'    => '-1',
-        'category'      => '',
-        'thumbnail'     => 'false',
-        'excerpt'       => 'true',
-        'orderby'       => 'post_date'
-    ), $atts));
+    $args = [
+        'orderby'        => 'post_date',
+        'posts_per_page' => $posts_per_page,
+        'post_type'        => 'faq',
+        'tax_query' => [
+            'relation' => 'OR',
+            [
+                'taxonomy' => 'faq_kategorien',
+                'field'    => 'slug',
+                'terms'    => [ $category ],
+            ],
+        ],
+    ];
 
+    $new_posts = new WP_Query( $args );
 
-    $args = array(
-        'nopaging'      => true,
-        'orderby'       => $orderby,
-        'post_type'     => 'faq',
-        'tax_query'     => array(
-            array(
-                'taxonomy'  => 'faq-kategorien',
-                'field'     => 'slug',
-                'terms'     => array($category)
-            )
-        ));
-    $new_posts = new WP_Query($args);
-    if ($new_posts->have_posts()) { // If there are Posts
-        while ($new_posts->have_posts()) { // While there are Posts
+    // if there are faqs
+    if ( $new_posts->have_posts() ) {
+
+        // if polylang is installed let the language change
+        change_lang();
+
+        // show FAQ as title
+        faq_title();
+
+        // While there are faqs
+        while ( $new_posts->have_posts() ) {
             $new_posts->the_post();
-            faq_table($new_posts, $question, $answer, $author);
+
+            // show faqs in table
+            faq_table();
         }
     }
 
 }
-add_shortcode( 'faq-kategorien', 'shortcode_faq' );
+
+add_shortcode( 'faq_kategorien', 'shortcode_faq' );
 
